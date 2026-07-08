@@ -1,0 +1,217 @@
+---
+import Layout from '../layouts/Layout.astro';
+import business from '../data/business.json';
+
+const openHours = business.hours
+  .filter(h => h.open)
+  .map(h => ({
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": h.dayEn,
+    "opens": h.timeOpens,
+    "closes": h.timeCloses
+  }));
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Bakery",
+  "name": business.name,
+  "telephone": business.phoneRaw,
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": business.address.street,
+    "addressLocality": business.address.city,
+    "addressRegion": business.address.region,
+    "postalCode": business.address.postalCode,
+    "addressCountry": "CA"
+  },
+  "inLanguage": "fr-CA",
+  "openingHoursSpecification": openHours,
+  "image": [business.photos.hero, ...business.photos.gallery],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": business.rating,
+    "reviewCount": business.reviewCount
+  }
+};
+
+// "Aujourd'hui" en français, calculé en JS
+const dayOrder = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
+const today = new Date().toLocaleDateString("fr-CA", { weekday: "long" });
+const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
+const todayHours = business.hours.find(h => h.day === todayCapitalized);
+---
+<Layout title={`${business.name} – ${business.tagline}`}>
+  <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <header class="hero">
+    <img src={business.photos.hero} alt={`Devanture en bois de la Boulange Chez Daoust avec son enseigne à Notre-Dame-du-Laus`} />
+    <div class="hero-overlay">
+      <h1>{business.name}</h1>
+      <p class="tagline">{business.tagline}</p>
+      <p class="rating">★ {business.rating} <span>({business.reviewCount} avis Google)</span></p>
+    </div>
+  </header>
+
+  <section class="story">
+    <h2>Notre histoire</h2>
+    <p>{business.history}</p>
+  </section>
+
+  <section class="wood-oven">
+    <h2>Le four à bois, notre signature</h2>
+    <div class="wood-oven-grid">
+      {business.photos.woodOven.map(src => (
+        <img src={src} alt="Notre four à bois d'origine" loading="lazy" />
+      ))}
+    </div>
+    <p>Depuis trois générations, nous cuisons nos pains au four à bois. Une tradition vivante qui donne à chaque produit un goût fumé, profond, impossible à reproduire dans un four moderne.</p>
+  </section>
+
+  <section class="specialties">
+    <h2>Nos spécialités</h2>
+    <div class="specialty-grid">
+      {business.specialties.map(s => (
+        <article class="specialty-card">
+          <h3>{s.name}</h3>
+          {s.description && <p>{s.description}</p>}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="gallery">
+    <h2>En images</h2>
+    <div class="gallery-grid">
+      {business.photos.gallery.map(src => (
+        <img src={src} alt="" loading="lazy" />
+      ))}
+    </div>
+  </section>
+
+  <section class="hours">
+    <h2>Heures d'ouverture</h2>
+    <ul class="hours-list">
+      {business.hours.map(h => (
+        <li class={h.open ? 'open' : 'closed'}>
+          <span class="day">{h.day}</span>
+          <span class="time">{h.time}</span>
+        </li>
+      ))}
+    </ul>
+    {todayHours && (
+      <p class="today">
+        {todayHours.open
+          ? `✅ Aujourd'hui, nous sommes ouverts de ${todayHours.time.toLowerCase()}.`
+          : `🚫 Aujourd'hui, nous sommes fermés.`}
+      </p>
+    )}
+  </section>
+
+  <section class="address">
+    <h2>Nous trouver</h2>
+    <p class="address-line">📍 {business.address.full}</p>
+    <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
+    <a class="maps-link"
+       href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>
+      Ouvrir dans Google Maps →
+    </a>
+  </section>
+
+  <footer>
+    <p>© {new Date().getFullYear()} {business.name} · {business.address.city}, QC</p>
+  </footer>
+</Layout>
+
+<style>
+  :root {
+    --cream: #fdfaf5;
+    --card: #fff8ed;
+    --text: #2d2419;
+    --accent: #b87333;
+    --muted: #8b7d6b;
+    --border: #e8dfd0;
+  }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: var(--text);
+    background: var(--cream);
+    line-height: 1.65;
+  }
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; color: var(--text); }
+  h1 { font-size: 2.5rem; margin: 0; }
+  h2 { font-size: 1.75rem; margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 1.15rem; margin: 0 0 0.4rem; }
+  p { margin: 0.5rem 0; }
+
+  .hero { position: relative; width: 100%; height: 400px; overflow: hidden; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; object-position: center 60%; }
+  .hero-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.75));
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 2rem; color: white;
+}
+  
+  .hero-overlay h1 { color: white; margin: 0 0 0.25rem; }
+  .hero-overlay .tagline { font-size: 1.15rem; opacity: 0.95; margin: 0 0 0.5rem; }
+  .hero-overlay .rating { font-size: 1rem; opacity: 0.9; margin: 0; }
+  .hero-overlay .rating span { opacity: 0.75; font-size: 0.9rem; }
+
+  section { padding: 1.75rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .story { background: var(--card); border-left: 4px solid var(--accent); }
+  .story p { font-size: 1.05rem; line-height: 1.7; }
+
+  .wood-oven-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.25rem;
+  }
+  .wood-oven-grid img { width: 100%; border-radius: 8px; height: 280px; object-fit: cover; }
+
+  .specialty-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem; margin: 1rem 0;
+  }
+  .specialty-card {
+    background: var(--card); padding: 1.25rem;
+    border-radius: 8px; border: 1px solid var(--border);
+  }
+
+  .gallery-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem; margin: 1rem 0;
+  }
+  .gallery-grid img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; }
+
+  .hours-list { list-style: none; padding: 0; margin: 1rem 0; max-width: 360px; }
+  .hours-list li {
+    display: flex; justify-content: space-between;
+    padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border);
+  }
+  .hours-list li.closed { color: var(--muted); font-style: italic; }
+  .hours-list .day { font-weight: 600; }
+  .today {
+    background: var(--card); padding: 0.75rem 1rem; border-radius: 6px;
+    border-left: 3px solid var(--accent); font-weight: 500; margin-top: 1rem;
+  }
+
+  .address-line, .phone-line { font-size: 1.1rem; }
+  .maps-link {
+    display: inline-block; background: var(--accent); color: white;
+    padding: 0.75rem 1.25rem; border-radius: 6px; text-decoration: none;
+    margin-top: 1rem; font-weight: 500;
+  }
+  .maps-link:hover { background: #9a5d2a; }
+
+  footer {
+    text-align: center; padding: 2rem 1rem; color: var(--muted);
+    font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    .hero { height: 400px; }
+    h1 { font-size: 1.85rem; }
+    h2 { font-size: 1.45rem; }
+    section { padding: 1rem; }
+    .wood-oven-grid { grid-template-columns: 1fr; }
+  }
+</style>
