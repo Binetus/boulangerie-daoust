@@ -16,6 +16,7 @@ const jsonLd = {
   "@type": "Bakery",
   "name": business.name,
   "telephone": business.phoneRaw,
+  "email": business.email,
   "address": {
     "@type": "PostalAddress",
     "streetAddress": business.address.street,
@@ -26,7 +27,7 @@ const jsonLd = {
   },
   "inLanguage": "fr-CA",
   "openingHoursSpecification": openHours,
-  "image": [business.photos.hero, ...business.photos.gallery],
+  "image": [business.photos.hero, business.photos.storyImage, ...business.photos.gallery],
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": business.rating,
@@ -34,8 +35,6 @@ const jsonLd = {
   }
 };
 
-// "Aujourd'hui" en français, calculé en JS
-const dayOrder = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 const today = new Date().toLocaleDateString("fr-CA", { weekday: "long" });
 const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
 const todayHours = business.hours.find(h => h.day === todayCapitalized);
@@ -44,7 +43,7 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <header class="hero">
- <img src={business.photos.hero} alt={`Devanture de ${business.name}`} />   
+    <img src={business.photos.hero} alt={`Devanture de ${business.name}`} />
     <div class="hero-overlay">
       <h1>{business.name}</h1>
       <p class="tagline">{business.tagline}</p>
@@ -52,18 +51,13 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     </div>
   </header>
 
- <section class="story">
-  <h2>Notre histoire</h2>
-  <div class="story-content">
-    <img
-      src={business.storyImage}
-      alt="Devanture de la Boulange Chez Daoust à Notre-Dame-du-Laus"
-      class="story-image"
-      loading="lazy"
-    />
-    <p>{business.history}</p>
-  </div>
-</section> 
+  <section class="story">
+    <h2>Notre histoire</h2>
+    <div class="story-content">
+      <img src={business.photos.storyImage} alt="Devanture de la Boulange Chez Daoust à Notre-Dame-du-Laus" class="story-image" loading="lazy" />
+      <p>{business.history}</p>
+    </div>
+  </section>
 
   <section class="wood-oven">
     <h2>Le four à bois, notre signature</h2>
@@ -72,7 +66,7 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
         <img src={src} alt="Notre four à bois d'origine" loading="lazy" />
       ))}
     </div>
-    <p>Depuis trois générations, nous cuisons nos pains au four à bois. Une tradition vivante qui donne à chaque produit un goût fumé, profond, impossible à reproduire dans un four moderne.</p>
+    <p>Depuis quatre générations, nous cuisons nos pains au four à bois. Une tradition vivante qui donne à chaque produit un goût fumé, profond, impossible à reproduire dans un four moderne.</p>
   </section>
 
   <section class="specialties">
@@ -80,9 +74,23 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     <div class="specialty-grid">
       {business.specialties.map(s => (
         <article class="specialty-card">
-          <h3>{s.name}</h3>
+          <h3>
+            <a href={s.image} target="_blank" rel="noopener noreferrer">
+              {s.name} <span class="arrow">→</span>
+            </a>
+          </h3>
           {s.description && <p>{s.description}</p>}
         </article>
+      ))}
+    </div>
+  </section>
+
+  <section class="menu">
+    <h2>Notre menu</h2>
+    <p class="menu-intro">Quelques-uns de nos produits phares, préparés chaque jour avec des ingrédients locaux.</p>
+    <div class="menu-grid">
+      {business.menuPhotos.map(src => (
+        <img src={src} alt="Photo de notre menu" loading="lazy" />
       ))}
     </div>
   </section>
@@ -94,6 +102,17 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
         <img src={src} alt="" loading="lazy" />
       ))}
     </div>
+  </section>
+
+  <section class="payments">
+    <h2>Modes de paiement acceptés</h2>
+    <ul class="payment-list">
+      {business.payments.map(p => (
+        <li class="payment-item">
+          <span class="check">✅</span> {p}
+        </li>
+      ))}
+    </ul>
   </section>
 
   <section class="hours">
@@ -119,10 +138,21 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     <h2>Nous trouver</h2>
     <p class="address-line">📍 {business.address.full}</p>
     <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
-    <a class="maps-link"
-       href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>
-      Ouvrir dans Google Maps →
-    </a>
+    <div class="address-buttons">
+      <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
+      <a class="contact-button" href={`mailto:${business.email}`}>✉️ Nous joindre</a>
+    </div>
+
+    <div class="qr-section">
+      <h3>📱 Scannez pour ouvrir cette page sur votre téléphone</h3>
+      <img
+        src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent('https://boulangerie-daoust.pages.dev')}&size=200x200`}
+        alt="Code QR du site de la Boulange Chez Daoust"
+        class="qr-code"
+        loading="lazy"
+      />
+      <p class="qr-help">À imprimer et coller au comptoir, ou à partager avec vos clients.</p>
+    </div>
   </section>
 
   <footer>
@@ -152,15 +182,14 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   h3 { font-size: 1.15rem; margin: 0 0 0.4rem; }
   p { margin: 0.5rem 0; }
 
-  .hero { position: relative; width: 100%; height: 600px; overflow: hidden; }
-  .hero img { width: 100%; height: 100%; object-fit: cover; object-position: center 50%; }
+  .hero { position: relative; width: 100%; height: 420px; overflow: hidden; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; }
   .hero-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.75));
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 2rem; color: white;
-}
-  
+    position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.75));
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: 2rem; color: white;
+  }
   .hero-overlay h1 { color: white; margin: 0 0 0.25rem; }
   .hero-overlay .tagline { font-size: 1.15rem; opacity: 0.95; margin: 0 0 0.5rem; }
   .hero-overlay .rating { font-size: 1rem; opacity: 0.9; margin: 0; }
@@ -171,31 +200,23 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   .story p { font-size: 1.05rem; line-height: 1.7; }
 
   .story-content {
-  display: grid;
-  grid-template-columns: 1fr 1.5fr;
-  gap: 1.5rem;
-  align-items: center;
-  margin-top: 1rem;
-}
-.story-image {
-  width: 100%;
-  height: 400px;
-  object-fit: cover;
-  border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
-}
-
-/* Sur mobile : on empile verticalement */
-@media (max-width: 700px) {
-  .story-content {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 1.5rem;
+    align-items: center;
+    margin-top: 1rem;
   }
   .story-image {
-    height: 220px;
-    order: -1;  /* l'image passe au-dessus du texte */
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
   }
-}
 
+  .wood-ven-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.25rem;
+  }
   .wood-oven-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.25rem;
   }
@@ -209,12 +230,64 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     background: var(--card); padding: 1.25rem;
     border-radius: 8px; border: 1px solid var(--border);
   }
+  .specialty-card h3 a {
+    color: var(--text);
+    text-decoration: none;
+    border-bottom: 2px dotted var(--accent);
+    padding-bottom: 2px;
+    transition: color 0.15s, border-bottom-style 0.15s;
+  }
+  .specialty-card h3 a:hover {
+    color: var(--accent);
+    border-bottom-style: solid;
+  }
+  .specialty-card h3 a .arrow {
+    display: inline-block;
+    font-weight: normal;
+    transition: transform 0.2s;
+  }
+  .specialty-card h3 a:hover .arrow { transform: translateX(4px); }
+
+  .menu-intro { color: var(--muted); font-style: italic; margin-bottom: 1rem; }
+  .menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    margin: 1rem 0;
+  }
+  .menu-grid img {
+    width: 100%;
+    height: 280px;
+    object-fit: cover;
+    border-radius: 8px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  }
 
   .gallery-grid {
     display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 0.75rem; margin: 1rem 0;
   }
   .gallery-grid img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; }
+
+  .payment-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+    display: grid;
+    gap: 0.5rem;
+    max-width: 480px;
+  }
+  .payment-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    background: var(--card);
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    font-size: 1.05rem;
+  }
+  .check { font-size: 1.2rem; }
 
   .hours-list { list-style: none; padding: 0; margin: 1rem 0; max-width: 360px; }
   .hours-list li {
@@ -229,23 +302,57 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   }
 
   .address-line, .phone-line { font-size: 1.1rem; }
-  .maps-link {
-    display: inline-block; background: var(--accent); color: white;
-    padding: 0.75rem 1.25rem; border-radius: 6px; text-decoration: none;
-    margin-top: 1rem; font-weight: 500;
+  .address-buttons {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;
   }
-  .maps-link:hover { background: #9a5d2a; }
+  .maps-link, .contact-button {
+    display: inline-block; padding: 0.75rem 1.25rem; border-radius: 6px;
+    text-decoration: none; font-weight: 500; color: white; background: var(--accent);
+  }
+  .maps-link:hover, .contact-button:hover { background: #9a5d2a; }
+  .contact-button { background: var(--text); }
+  .contact-button:hover { background: #1a1410; }
+
+  .qr-section {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: var(--card);
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    text-align: center;
+    max-width: 320px;
+  }
+  .qr-section h3 {
+    font-size: 1.05rem;
+    margin: 0 0 1rem;
+    border: none;
+    padding: 0;
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  .qr-code {
+    width: 200px; height: 200px; margin: 0 auto; display: block; border-radius: 4px;
+  }
+  .qr-help {
+    font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;
+  }
 
   footer {
     text-align: center; padding: 2rem 1rem; color: var(--muted);
     font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 2rem;
   }
 
+  @media (max-width: 700px) {
+    .story-content { grid-template-columns: 1fr; }
+    .story-image { height: 220px; order: -1; }
+    .wood-oven-grid { grid-template-columns: 1fr; }
+  }
   @media (max-width: 600px) {
-    .hero { height: 400px; }
+    .hero { height: 280px; }
     h1 { font-size: 1.85rem; }
     h2 { font-size: 1.45rem; }
     section { padding: 1rem; }
-    .wood-oven-grid { grid-template-columns: 1fr; }
+    .address-buttons { flex-direction: column; align-items: flex-start; }
   }
 </style>
+
