@@ -1,0 +1,48 @@
+{
+  "name": "Boulange Chez Daoust",
+  "tagline": "Quatre générations de boulangerie au four à bois",
+  "history": "La Boulangerie Daoust est une véritable institution de la rue Notre-Dame à Notre-Dame-du-Laus, dans les Laurentides. Elle est réputée pour perpétuer des méthodes de cuisson traditionnelles, notamment grâce à son four à bois original de 1948, toujours en activité. L'établissement est la propriété et l'œuvre de la famille Daoust depuis quatre générations.",
+  "storyImage": "/photos/devanture.jpg",
+  "address": {
+    "full": "100 Rue Notre Dame, Notre-Dame-du-Laus, QC J0X 2M0",
+    "street": "100 Rue Notre Dame",
+    "city": "Notre-Dame-du-Laus",
+    "region": "QC",
+    "postalCode": "J0X 2M0"
+  },
+  "phone": "(819) 208-1739",
+  "phoneRaw": "+18192081739",
+  "rating": 4.7,
+  "reviewCount": 48,
+  "hours": [
+    { "day": "Lundi", "dayEn": "Monday", "time": "Fermé", "open": false },
+    { "day": "Mardi", "dayEn": "Tuesday", "time": "Fermé", "open": false },
+    { "day": "Mercredi", "dayEn": "Wednesday", "time": "7h00 – 17h00", "timeOpens": "07:00", "timeCloses": "17:00", "open": true },
+    { "day": "Jeudi", "dayEn": "Thursday", "time": "7h00 – 18h00", "timeOpens": "07:00", "timeCloses": "18:00", "open": true },
+    { "day": "Vendredi", "dayEn": "Friday", "time": "7h00 – 18h00", "timeOpens": "07:00", "timeCloses": "18:00", "open": true },
+    { "day": "Samedi", "dayEn": "Saturday", "time": "7h00 – 17h00", "timeOpens": "07:00", "timeCloses": "17:00", "open": true },
+    { "day": "Dimanche", "dayEn": "Sunday", "time": "10h00 – 15h00", "timeOpens": "10:00", "timeCloses": "15:00", "open": true }
+  ],
+  "specialties": [
+    { "name": "Pains au four à bois", "description": "Pains artisanaux cuits selon la tradition familiale" },
+    { "name": "Beignes maison", "description": "Beignes frais chaque jour" },
+    { "name": "Galettes à la mélasse", "description": "Notre spécialité signature" },
+    { "name": "Pizza au four à bois", "description": "Cuite au feu de bois sur commande" }
+  ],
+  "photos": {
+    "hero": "/photos/Entete.png",
+    "woodOven": ["/photos/fourabois.jpg", "/photos/fourabois2.jpg"],
+    "gallery": [
+      "/photos/galettesmollase.jpeg",
+      "/photos/painscuits.jpg",
+      "/photos/beignes.jpg",
+      "/photos/Pains2.jpg",
+      "/photos/pateapainpetriseur.jpg",
+      "/photos/patonspains.jpg",
+      "/photos/tartesavantcuisson.jpg",
+      "/photos/maitreboulanger.jpg",
+      "/photos/produitsaufour.jpg",
+      "/photos/Pizza.jpg"
+    ]
+  }
+}
