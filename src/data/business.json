@@ -1,7 +1,7 @@
 {
   "name": "Boulange Chez Daoust",
   "tagline": "Quatre générations de boulange au four à bois",
-  "email": "jstlouis17@hotmail.com",
+  "email": "boulangechezdaoust@outlook.com",
   "history": "La Boulangerie Daoust est une véritable institution située au 100, rue Notre-Dame à Notre-Dame-du-Laus, dans les Laurentides. Elle est réputée pour perpétuer des méthodes de cuisson traditionnelles, notamment grâce à son four à bois original, toujours en activité. L'établissement est la propriété et l'œuvre de la famille Daoust depuis quatre générations.",
   "address": {
     "full": "100 Rue Notre Dame, Notre-Dame-du-Laus, QC J0X 2M0",
@@ -27,12 +27,50 @@
     { "name": "Pains au four à bois", "description": "Pains artisanaux cuits selon la tradition familiale", "image": "/photos/fourabois.jpg" },
     { "name": "Beignes maison", "description": "Beignes frais chaque jour", "image": "/photos/beignes.jpg" },
     { "name": "Galettes à la mélasse", "description": "Notre spécialité signature", "image": "/photos/galettesmollase.jpeg" },
-    { "name": "Pizza au four à bois", "description": "Cuite au feu de bois sur commande", "image": "/photos/produitaufour.jpg" }
+    { "name": "Pizza au four à bois", "description": "Cuite au feu de bois sur commande", "image": "/photos/pizza.jpg" }
   ],
-  "menuPhotos": [
-    "/photos/menu1.jpg",
-    "/photos/menu2.jpg",
-    "/photos/menu3.jpg"
+  "menu": [
+    {
+      "category": "Nos pains",
+      "items": [
+        { "name": "Pain blanc", "price": "3,85 $" },
+        { "name": "Pain brun", "price": "3,85 $" },
+        { "name": "Pain de fesse", "price": "3,95 $" },
+        { "name": "Pain chinois", "price": "3,95 $" },
+        { "name": "Pain à salade", "price": "3,95 $" },
+        { "name": "Baguette", "price": "3,85 $" },
+        { "name": "Pain aux raisins", "price": "4,20 $" },
+        { "name": "Pain à l'ail", "price": "4,95 $" },
+        { "name": "Buns aux raisins", "price": "3,95 $" }
+      ]
+    },
+    {
+      "category": "Nos douceurs",
+      "items": [
+        { "name": "Beignes (6)", "price": "5,10 $" },
+        { "name": "Paix de nonnes", "price": "6,20 $" },
+        { "name": "Délices au sucre", "price": "4,95 $" },
+        { "name": "Brioches à la cannelle", "price": "4,95 $" },
+        { "name": "Brioches aux fruits", "price": "4,95 $" },
+        { "name": "Brioches cannelle & raisins", "price": "4,95 $" },
+        { "name": "Galettes à la mélasse (6)", "price": "3,85 $" },
+        { "name": "Galettes à la mélasse (8)", "price": "5,10 $" },
+        { "name": "Galettes blanches (6)", "price": "3,65 $" },
+        { "name": "Galettes blanches (12)", "price": "5,10 $" },
+        { "name": "Tartes maison aux fruits", "price": "8,55 $" }
+      ]
+    },
+    {
+      "category": "Tourtes et pâtes",
+      "items": [
+        { "name": "Tourtière (petite)", "price": "5,10 $" },
+        { "name": "Tourtière (grosse)", "price": "8,55 $" },
+        { "name": "Pâté au poulet (Petit)", "price": "5,10 $" },
+        { "name": "Pâté au poulet (Gros)", "price": "8,55 $" },
+        { "name": "Pâtes à pizza", "price": "4,10 $" },
+        { "name": "Pâtes à tarte", "price": "3,05 $" }
+      ]
+    }
   ],
   "payments": [
     "Cartes de débit",
@@ -42,7 +80,10 @@
   "photos": {
     "hero": "/photos/Entete.png",
     "storyImage": "/photos/devanture.jpg",
-    "woodOven": ["/photos/fourabois.jpg", "/photos/fourabois2.jpg"],
+    "woodOven": [
+      "/photos/fourabois.jpg",
+      "/photos/fourabois2.jpg"
+    ],
     "gallery": [
       "/photos/galettesmollase.jpeg",
       "/photos/painscuits.jpg",
@@ -52,9 +93,8 @@
       "/photos/patonspains.jpg",
       "/photos/tartesavantcuisson.jpg",
       "/photos/maitreboulanger.jpg",
-      "/photos/produitsaufour.jpg",
-      "/photos/brioche.jpg"
+      "/photos/brioche.jpg",
+      "/photos/produitaufour.jpg"
     ]
   }
 }
-
