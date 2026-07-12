@@ -393,14 +393,22 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;
   }
   .maps-link, .contact-button {
-    display: inline-block; padding: 0.75rem 1.25rem; border-radius: 6px;
-    text-decoration: none; font-weight: 500; color: white; background: var(--accent);
-  }
-  .maps-link:hover, .contact-button:hover { background: #9a5d2a; }
-  .contact-button { background: var(--text); }  /* ← ça donnait crème invisible */
-  .contact-button:hover { background: #1a1410; }
+  display: inline-block;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  color: #ffffff !important;        /* blanc forcé */
+  background-color: #b87333 !important;   /* cuivre foncé forcé */
+  border: 2px solid transparent;
+}
+.contact-button:hover {
+  background-color: #8b5e29 !important;   /* cuivre plus foncé au hover */
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
 
-
+  
   .qr-section {
     margin-top: 2rem;
     padding: 1.5rem;
