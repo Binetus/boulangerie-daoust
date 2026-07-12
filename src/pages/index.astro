@@ -165,7 +165,9 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
 
   <footer>
     <p>© {new Date().getFullYear()} {business.name} · {business.address.city}, QC</p>
-  </footer>
+    <p class="credit">Conception et réalisation par <strong>Binetus média</strong></p>
+</footer>
+
 </Layout>
 
 <style>
@@ -410,6 +412,16 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     text-align: center; padding: 2rem 1rem; color: var(--muted);
     font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 2rem;
   }
+  footer .credit {
+    margin-top: 0.5rem;
+    font-size: 0.8rem;
+    opacity: 0.75;
+    letter-spacing: 0.02em;
+}
+
+footer .credit strong {
+    color: var(--accent);
+}
 
   @media (max-width: 700px) {
     .story-content { grid-template-columns: 1fr; }
