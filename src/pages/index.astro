@@ -147,9 +147,25 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     <p class="address-line">📍 {business.address.full}</p>
     <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
     <div class="address-buttons">
-      <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
-      <a class="contact-button" href={`mailto:${business.email}`}>✉️ Nous joindre</a>
-    </div>
+  <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
+  
+  <a class="review-qr-wrapper" 
+     href="https://search.google.com/local/writereview?placeid=ChIJ-9ilfecl0EwRwb8reNou_sc" 
+     target="_blank" 
+     rel="noopener noreferrer" 
+     aria-label="Laisser un avis Google">
+    <img
+      src="https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fsearch.google.com%2Flocal%2Fwritereview%3Fplaceid%3DChIJ-9ilfecl0EwRwb8reNou_sc&size=120x120"
+      alt="Code QR pour laisser un avis Google sur la Boulange Chez Daoust"
+      class="qr-review"
+    />
+    <span class="qr-review-label">⭐ Laisser un avis</span>
+  </a>
+  
+  <a class="contact-button" href={`mailto:${business.email}`}>✉️ Nous joindre</a>
+</div>
+
+
 
     <div class="qr-section">
       <h3>📱 Scannez pour ouvrir cette page sur votre téléphone</h3>
@@ -381,8 +397,9 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     text-decoration: none; font-weight: 500; color: white; background: var(--accent);
   }
   .maps-link:hover, .contact-button:hover { background: #9a5d2a; }
-  .contact-button { background: var(--text); }
+  .contact-button { background: var(--text); }  /* ← ça donnait crème invisible */
   .contact-button:hover { background: #1a1410; }
+
 
   .qr-section {
     margin-top: 2rem;
@@ -435,6 +452,36 @@ footer .credit strong {
     section { padding: 1rem; }
     .address-buttons { flex-direction: column; align-items: flex-start; }
     .menu-boards { grid-template-columns: 1fr; }
+    .qr-review { width: 70px; height: 70px; }
+
   }
+.review-qr-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  background: var(--card);
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: transform 0.15s, border-color 0.15s;
+}
+.review-qr-wrapper:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+.qr-review {
+  width: 80px;
+  height: 80px;
+  display: block;
+  border-radius: 4px;
+}
+.qr-review-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.4rem;
+  font-weight: 500;
+  text-align: center;
+}
 </style>
 
