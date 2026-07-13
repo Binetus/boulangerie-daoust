@@ -16,7 +16,6 @@ const jsonLd = {
   "@type": "Bakery",
   "name": business.name,
   "telephone": business.phoneRaw,
-  "email": business.email,
   "address": {
     "@type": "PostalAddress",
     "streetAddress": business.address.street,
@@ -27,7 +26,7 @@ const jsonLd = {
   },
   "inLanguage": "fr-CA",
   "openingHoursSpecification": openHours,
-  "image": [business.photos.hero, business.photos.storyImage, ...business.photos.gallery],
+  "image": [business.photos.hero, ...business.photos.gallery],
   "aggregateRating": {
     "@type": "AggregateRating",
     "ratingValue": business.rating,
@@ -35,6 +34,8 @@ const jsonLd = {
   }
 };
 
+// "Aujourd'hui" en français, calculé en JS
+const dayOrder = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 const today = new Date().toLocaleDateString("fr-CA", { weekday: "long" });
 const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
 const todayHours = business.hours.find(h => h.day === todayCapitalized);
@@ -43,39 +44,26 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
   <header class="hero">
-    <img src={business.photos.hero} alt={`Devanture de ${business.name}`} />
+ <img src={business.photos.hero} alt={`Devanture de ${business.name}`} />   
     <div class="hero-overlay">
+      <h1>{business.name}</h1>
       <p class="tagline">{business.tagline}</p>
       <p class="rating">★ {business.rating} <span>({business.reviewCount} avis Google)</span></p>
     </div>
   </header>
-<section class="menu">
-  <h2>Notre menu</h2>
-  <p class="menu-intro">Produits frais du jour, préparés sur place.</p>
-  <div class="menu-boards">
-    {business.menu.map(category => (
-      <div class="menu-board">
-        <h3>{category.category}</h3>
-        <ul class="menu-board-list">
-          {category.items.map(item => (
-            <li class="menu-board-item">
-              <span class="name">{item.name}</span>
-              <span class="price">{item.price}</span>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </div>
-</section>
 
-  <section class="story">
-    <h2>Notre histoire</h2>
-    <div class="story-content">
-      <img src={business.photos.storyImage} alt="Devanture de la Boulange Chez Daoust à Notre-Dame-du-Laus" class="story-image" loading="lazy" />
-      <p>{business.history}</p>
-    </div>
-  </section>
+ <section class="story">
+  <h2>Notre histoire</h2>
+  <div class="story-content">
+    <img
+      src={business.storyImage}
+      alt="Devanture de la Boulange Chez Daoust à Notre-Dame-du-Laus"
+      class="story-image"
+      loading="lazy"
+    />
+    <p>{business.history}</p>
+  </div>
+</section> 
 
   <section class="wood-oven">
     <h2>Le four à bois, notre signature</h2>
@@ -84,7 +72,7 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
         <img src={src} alt="Notre four à bois d'origine" loading="lazy" />
       ))}
     </div>
-    <p>Depuis quatre générations, nous cuisons nos pains au four à bois. Une tradition vivante qui donne à chaque produit un goût unique, impossible à reproduire dans un four moderne.</p>
+    <p>Depuis trois générations, nous cuisons nos pains au four à bois. Une tradition vivante qui donne à chaque produit un goût fumé, profond, impossible à reproduire dans un four moderne.</p>
   </section>
 
   <section class="specialties">
@@ -92,11 +80,7 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     <div class="specialty-grid">
       {business.specialties.map(s => (
         <article class="specialty-card">
-          <h3>
-            <a href={s.image} target="_blank" rel="noopener noreferrer">
-              {s.name} <span class="arrow">→</span>
-            </a>
-          </h3>
+          <h3>{s.name}</h3>
           {s.description && <p>{s.description}</p>}
         </article>
       ))}
@@ -104,68 +88,12 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   </section>
 
   <section class="gallery">
-  <h2>En images</h2>
-  <div class="carousel">
-    <button class="carousel-arrow carousel-arrow-left" aria-label="Photo précédente">‹</button>
-    <div class="carousel-track" id="carousel-track">
-      {business.photos.gallery.map((src, i) => (
-        <div class="carousel-slide" data-caption={business.galleryCaptions[i] || ''}>
-          <img src={src} alt={business.galleryCaptions[i] || 'Photo de la boulangerie'} loading="lazy" />
-        </div>
+    <h2>En images</h2>
+    <div class="gallery-grid">
+      {business.photos.gallery.map(src => (
+        <img src={src} alt="" loading="lazy" />
       ))}
     </div>
-    <button class="carousel-arrow carousel-arrow-right" aria-label="Photo suivante">›</button>
-  </div>
-  <p class="carousel-active-caption" id="carousel-active-caption">
-    {business.galleryCaptions[0] || ''}
-  </p>
-</section>
-
-<script>
-  const track = document.getElementById('carousel-track');
-  const slides = Array.from(track.querySelectorAll('.carousel-slide'));
-  const caption = document.getElementById('carousel-active-caption');
-  const arrows = document.querySelectorAll('.carousel-arrow');
-
-  function updateActive() {
-    const trackCenter = track.scrollLeft + track.offsetWidth / 2;
-    let closestSlide = slides[0];
-    let minDist = Infinity;
-    slides.forEach(slide => {
-      const slideCenter = slide.offsetLeft + slide.offsetWidth / 2;
-      const dist = Math.abs(slideCenter - trackCenter);
-      if (dist < minDist) {
-        closestSlide = slide;
-        minDist = dist;
-      }
-    });
-    slides.forEach(s => s.classList.remove('is-active'));
-    closestSlide.classList.add('is-active');
-    caption.textContent = closestSlide.dataset.caption || '';
-  }
-
-  arrows.forEach(arrow => {
-    arrow.addEventListener('click', () => {
-      const slideWidth = slides[0].offsetWidth;
-      const gap = 16;
-      const dir = arrow.classList.contains('carousel-arrow-left') ? -1 : 1;
-      track.scrollBy({ left: dir * (slideWidth + gap), behavior: 'smooth' });
-    });
-  });
-
-  track.addEventListener('scroll', updateActive, { passive: true });
-  updateActive();
-</script>
-
-  <section class="payments">
-    <h2>Modes de paiement acceptés</h2>
-    <ul class="payment-list">
-      {business.payments.map(p => (
-        <li class="payment-item">
-          <span class="check">✅</span> {p}
-        </li>
-      ))}
-    </ul>
   </section>
 
   <section class="hours">
@@ -191,56 +119,26 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     <h2>Nous trouver</h2>
     <p class="address-line">📍 {business.address.full}</p>
     <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
-    <div class="address-buttons">
-  <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
-  
-  <a class="review-qr-wrapper" 
-     href="https://search.google.com/local/writereview?placeid=ChIJ-9ilfecl0EwRwb8reNou_sc" 
-     target="_blank" 
-     rel="noopener noreferrer" 
-     aria-label="Laisser un avis Google">
-    <img
-      src="https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fsearch.google.com%2Flocal%2Fwritereview%3Fplaceid%3DChIJ-9ilfecl0EwRwb8reNou_sc&size=120x120"
-      alt="Code QR pour laisser un avis Google sur la Boulange Chez Daoust"
-      class="qr-review"
-    />
-    <span class="qr-review-label">⭐ Laisser un avis</span>
-  </a>
-  
-  <a class="contact-button" href={`mailto:${business.email}`}>✉️ Nous joindre</a>
-</div>
-
-
-
-    <div class="qr-section">
-      <h3>📱 Scannez pour ouvrir cette page sur votre téléphone</h3>
-     <img
-      src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent('https://boulangechezdaoust.pages.dev')}&size=200x200`}
-      alt="Code QR du site de la Boulange Chez Daoust"
-      class="qr-code"
-      loading="lazy"
-/>
-      <p class="qr-help"></p>
-    </div>
+    <a class="maps-link"
+       href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>
+      Ouvrir dans Google Maps →
+    </a>
   </section>
 
   <footer>
     <p>© {new Date().getFullYear()} {business.name} · {business.address.city}, QC</p>
-    <p class="credit">Conception et réalisation par <strong>Binetus média</strong></p>
-</footer>
-
+  </footer>
 </Layout>
 
 <style>
- :root {
-  --cream: #1a1410;       /* fond principal — brun foncé */
-  --card: #2a2018;         /* cartes — un peu plus clair */
-  --text: #f5f0e8;         /* texte — crème clair */
-  --accent: #d68c4a;       /* cuivre plus vif pour bien ressortir */
-  --muted: #a09184;        /* texte secondaire — beige moyen */
-  --border: #3a2f25;       /* bordures — brun moyen */
-}
- 
+  :root {
+    --cream: #fdfaf5;
+    --card: #fff8ed;
+    --text: #2d2419;
+    --accent: #b87333;
+    --muted: #8b7d6b;
+    --border: #e8dfd0;
+  }
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -254,17 +152,15 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   h3 { font-size: 1.15rem; margin: 0 0 0.4rem; }
   p { margin: 0.5rem 0; }
 
-  .hero { position: relative; width: 100%; height: 420px; overflow: hidden; }
-  .hero img { width: 100%; height: 100%; object-fit: cover; }
-.hero-overlay {
+  .hero { position: relative; width: 100%; height: 600px; overflow: hidden; }
+  .hero img { width: 100%; height: 100%; object-fit: cover; object-position: center 50%; }
+  .hero-overlay {
   position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(255,250,245,0.85), rgba(255,250,245,0));
-  display: flex; flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-end;
-  text-align: right;
-  padding: 2rem; color: #2d2419;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.75));
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 2rem; color: white;
 }
+  
   .hero-overlay h1 { color: white; margin: 0 0 0.25rem; }
   .hero-overlay .tagline { font-size: 1.15rem; opacity: 0.95; margin: 0 0 0.5rem; }
   .hero-overlay .rating { font-size: 1rem; opacity: 0.9; margin: 0; }
@@ -275,23 +171,31 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   .story p { font-size: 1.05rem; line-height: 1.7; }
 
   .story-content {
-    display: grid;
-    grid-template-columns: 1fr 1.5fr;
-    gap: 1.5rem;
-    align-items: center;
-    margin-top: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 1rem;
+}
+.story-image {
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* Sur mobile : on empile verticalement */
+@media (max-width: 700px) {
+  .story-content {
+    grid-template-columns: 1fr;
   }
   .story-image {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+    height: 220px;
+    order: -1;  /* l'image passe au-dessus du texte */
   }
+}
 
-  .wood-ven-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.25rem;
-  }
   .wood-oven-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.25rem;
   }
@@ -305,114 +209,12 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     background: var(--card); padding: 1.25rem;
     border-radius: 8px; border: 1px solid var(--border);
   }
-  .specialty-card h3 a {
-    color: var(--text);
-    text-decoration: none;
-    border-bottom: 2px dotted var(--accent);
-    padding-bottom: 2px;
-    transition: color 0.15s, border-bottom-style 0.15s;
+
+  .gallery-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem; margin: 1rem 0;
   }
-  .specialty-card h3 a:hover {
-    color: var(--accent);
-    border-bottom-style: solid;
-  }
-  .specialty-card h3 a .arrow {
-    display: inline-block;
-    font-weight: normal;
-    transition: transform 0.2s;
-  }
-  .specialty-card h3 a:hover .arrow { transform: translateX(4px); }
-.menu-intro { color: var(--muted); font-style: italic; margin-bottom: 1rem; }
-
-.menu-boards {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1rem;
-  margin: 1rem 0;
-}
-
-.menu-board {
-  background: #1a1410;
-  color: #f5f0e8;
-  padding: 1.5rem 1.25rem;
-  border-radius: 8px;
-  border: 1px solid #2a2018;
-  box-shadow:
-    inset 0 0 30px rgba(0,0,0,0.5),
-    0 4px 14px rgba(0,0,0,0.25);
-  position: relative;
-}
-
-.menu-board h3 {
-  text-align: center;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  font-size: 1.2rem;
-  margin: 0 0 1.25rem;
-  padding-bottom: 0.6rem;
-  border-bottom: 1px dashed rgba(245, 240, 232, 0.3);
-  color: #f5f0e8;
-  font-family: Georgia, "Times New Roman", serif;
-}
-
-.menu-board-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.menu-board-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 0.45rem 0;
-  border-bottom: 1px dotted rgba(245, 240, 232, 0.18);
-  font-size: 0.98rem;
-}
-
-.menu-board-item:last-child {
-  border-bottom: none;
-}
-
-.menu-board-item .name { 
-  flex: 1; 
-  padding-right: 0.5rem;
-}
-
-.menu-board-item .price { 
-  margin-left: 1rem;
-  white-space: nowrap;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: #b87333;
-}
-
-  .menu-grid img {
-    width: 100%;
-    height: 280px;
-    object-fit: cover;
-    border-radius: 8px;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
-  }
-  .payment-list {
-    list-style: none;
-    padding: 0;
-    margin: 1rem 0;
-    display: grid;
-    gap: 0.5rem;
-    max-width: 480px;
-  }
-  .payment-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.6rem 0.9rem;
-    background: var(--card);
-    border-radius: 6px;
-    border: 1px solid var(--border);
-    font-size: 1.05rem;
-  }
-  .check { font-size: 1.2rem; }
+  .gallery-grid img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; }
 
   .hours-list { list-style: none; padding: 0; margin: 1rem 0; max-width: 360px; }
   .hours-list li {
@@ -427,209 +229,23 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   }
 
   .address-line, .phone-line { font-size: 1.1rem; }
-  .address-buttons {
-    display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1rem;
+  .maps-link {
+    display: inline-block; background: var(--accent); color: white;
+    padding: 0.75rem 1.25rem; border-radius: 6px; text-decoration: none;
+    margin-top: 1rem; font-weight: 500;
   }
-  .maps-link, .contact-button {
-  display: inline-block;
-  padding: 0.75rem 1.25rem;
-  border-radius: 6px;
-  text-decoration: none;
-  font-weight: 500;
-  color: #ffffff !important;        /* blanc forcé */
-  background-color: #b87333 !important;   /* cuivre foncé forcé */
-  border: 2px solid transparent;
-}
-.contact-button:hover {
-  background-color: #8b5e29 !important;   /* cuivre plus foncé au hover */
-  color: #ffffff !important;
-  transform: translateY(-1px);
-}
-
-  
-  .qr-section {
-    margin-top: 2rem;
-    padding: 1.5rem;
-    background: var(--card);
-    border-radius: 8px;
-    border: 1px solid var(--border);
-    text-align: center;
-    max-width: 320px;
-  }
-  .qr-section h3 {
-    font-size: 1.05rem;
-    margin: 0 0 1rem;
-    border: none;
-    padding: 0;
-    color: var(--text);
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-  }
-  .qr-code {
-    width: 200px; height: 200px; margin: 0 auto; display: block; border-radius: 4px;
-  }
-  .qr-help {
-    font-size: 0.85rem; color: var(--muted); margin-top: 0.75rem;
-  }
+  .maps-link:hover { background: #9a5d2a; }
 
   footer {
     text-align: center; padding: 2rem 1rem; color: var(--muted);
     font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 2rem;
   }
-  footer .credit {
-    margin-top: 0.5rem;
-    font-size: 0.8rem;
-    opacity: 0.75;
-    letter-spacing: 0.02em;
-}
 
-footer .credit strong {
-    color: var(--accent);
-}
-
-  @media (max-width: 700px) {
-    .story-content { grid-template-columns: 1fr; }
-    .story-image { height: 220px; order: -1; }
-    .wood-oven-grid { grid-template-columns: 1fr; }
-  }
   @media (max-width: 600px) {
-    .hero { height: 280px; }
+    .hero { height: 400px; }
     h1 { font-size: 1.85rem; }
     h2 { font-size: 1.45rem; }
     section { padding: 1rem; }
-    .address-buttons { flex-direction: column; align-items: flex-start; }
-    .menu-boards { grid-template-columns: 1fr; }
-    .qr-review { width: 70px; height: 70px; }
-
+    .wood-oven-grid { grid-template-columns: 1fr; }
   }
-.review-qr-wrapper {
-  display: inline-flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-  background: var(--card);
-  padding: 0.6rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  transition: transform 0.15s, border-color 0.15s;
-}
-.review-qr-wrapper:hover {
-  transform: translateY(-2px);
-  border-color: var(--accent);
-}
-.qr-review {
-  width: 80px;
-  height: 80px;
-  display: block;
-  border-radius: 4px;
-}
-.qr-review-label {
-  font-size: 0.75rem;
-  color: var(--muted);
-  margin-top: 0.4rem;
-  font-weight: 500;
-  text-align: center;
-}
-/* ========== CAROUSEL ========== */
-.carousel {
-  position: relative;
-  margin: 1rem 0;
-}
-
-.carousel-track {
-  display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  gap: 1rem;
-  padding: 1rem 3rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--accent) transparent;
-}
-
-.carousel-track::-webkit-scrollbar {
-  height: 6px;
-}
-.carousel-track::-webkit-scrollbar-thumb {
-  background: var(--accent);
-  border-radius: 3px;
-}
-
-.carousel-slide {
-  flex: 0 0 calc((100% - 2rem) / 3);
-  scroll-snap-align: center;
-  border-radius: 8px;
-  overflow: hidden;
-  aspect-ratio: 4/3;
-  position: relative;
-  opacity: 0.2;
-  filter: blur(1px);
-  transform: scale(0.95);
-  transition: opacity 0.4s ease, filter 0.4s ease, transform 0.4s ease;
-}
-
-.carousel-slide.is-active {
-  opacity: 1;
-  filter: blur(0);
-  transform: scale(1);
-}
-
-.carousel-slide img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.carousel-arrow {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(184, 115, 51, 0.9);
-  color: white;
-  border: none;
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  font-size: 1.6rem;
-  line-height: 1;
-  cursor: pointer;
-  z-index: 5;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.2s, transform 0.2s;
-}
-
-.carousel-arrow-left { left: 0.5rem; }
-.carousel-arrow-right { right: 0.5rem; }
-
-.carousel-arrow:hover {
-  background: var(--accent);
-  transform: translateY(-50%) scale(1.1);
-}
-
-.carousel-active-caption {
-  text-align: center;
-  margin: 1.5rem auto 0;
-  max-width: 600px;
-  font-style: italic;
-  color: var(--text);
-  font-size: 1.05rem;
-  opacity: 0.85;
-  min-height: 1.5em;
-}
-
-/* Mobile : 1 slide visible à 100% */
-@media (max-width: 700px) {
-  .carousel-slide {
-    flex: 0 0 100%;
-  }
-  .carousel-track {
-    padding: 1rem 2.5rem;
-  }
-  .carousel-arrow { width: 36px; height: 36px; font-size: 1.3rem; }
-}
-
 </style>
-
