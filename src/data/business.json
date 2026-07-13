@@ -98,8 +98,7 @@
       "/photos/patonspains.jpg",
       "/photos/tartesavantcuisson.jpg",
       "/photos/maitreboulanger.jpg",
-      "/photos/brioche.jpg",
-      "/photos/produitaufour.jpg"
+      "/photos/brioche.jpg"
     ],
     "galleryCaptions": [
   "Galettes à la mélasse — recette familiale, parfaites avec un café",
@@ -111,7 +110,7 @@
   "Nos pâtons prêts à enfourner — patience et savoir-faire",
   "Maître boulanger à la sortie du four — plus de 30 ans de métier",
   "Produits finis tout juste sortis du four à bois",
-  "Préparation des tartes maison aux fruits de saison"
+  
 ]
   }
 }
