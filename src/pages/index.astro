@@ -155,9 +155,11 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     </a>
   </section>
 
-  <footer>
-    <p>© {new Date().getFullYear()} {business.name} · {business.address.city}, QC</p>
-  </footer>
+ <footer>
+  <p>© {new Date().getFullYear()} {business.name} · {business.address.city}, QC</p>
+  <p class="credit">Conception et réalisation par <strong>Binetus média</strong></p>
+</footer>
+ 
 </Layout>
 
 <script>
@@ -313,10 +315,17 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   }
   .maps-link:hover { background: #9a5d2a; }
 
-  footer {
-    text-align: center; padding: 2rem 1rem; color: var(--muted);
-    font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 2rem;
-  }
+  footer .credit {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.75;
+  letter-spacing: 0.02em;
+}
+
+footer .credit strong {
+  color: var(--accent);
+}
+
 
   @media (max-width: 600px) {
     .hero { height: 400px; }
