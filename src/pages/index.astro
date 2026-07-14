@@ -421,10 +421,17 @@ footer .credit strong {
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   gap: 1rem;
-  padding: 1rem 3rem;
+  padding: 1rem 0;
   scrollbar-width: thin;
   scrollbar-color: var(--accent) transparent;
 }
+
+.carousel-track::before,
+.carousel-track::after {
+  content: '';
+  flex: 0 0 calc((100% - 2rem) / 6);
+}
+
 
 .carousel-track::-webkit-scrollbar {
   height: 6px;
