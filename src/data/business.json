@@ -29,6 +29,55 @@
     { "name": "Galettes à la mélasse", "description": "Notre spécialité signature" }
     
   ],
+  "menu": [
+  {
+    "category": "Nos pains",
+    "items": [
+      { "name": "Pain blanc", "price": "4,99 $" },
+      { "name": "Pain brun", "price": "4,99 $" },
+      { "name": "Pain de fesse", "price": "4,99 $" },
+      { "name": "Pain chinois", "price": "4,99 $" },
+      { "name": "Pain à salade", "price": "4,99 $" },
+      { "name": "Pain baguette", "price": "4,99 $" },
+      { "name": "Pain aux raisins", "price": "5,99 $" },
+      { "name": "Pain ail et fromage", "price": "8,99 $" },
+      { "name": "Pain chedar et bacon", "price": "9,99 $" },
+      { "name": "Buns aux raisins", "price": "5,99 $" },
+      { "name": "Pain aux olives", "price": "2,00 $" }
+    ]
+  },
+  {
+    "category": "Nos douceurs",
+    "items": [
+      { "name": "Beignes (6)", "price": "4,50 $" },
+      { "name": "Beignes (12)", "price": "8,99 $" },
+      { "name": "Brioches à la framboise", "price": "8,99 $" },
+      { "name": "Brioches aux fraises", "price": "8,99 $" },
+      { "name": "Brioches cannelle", "price": "8,99 $" },
+      { "name": "Brioches cannelle & raisins", "price": "8,99 $" },
+      { "name": "Délices au sucre", "price": "8,99 $" },
+      { "name": "Galettes à la mélasse (4)", "price": "4,50 $" },
+      { "name": "Galettes à la mélasse (8)", "price": "8,99 $" },
+      { "name": "Galettes blanches (6)", "price": "4,50 $" },
+      { "name": "Galettes blanches (12)", "price": "8,99 $" },
+      { "name": "Pets de soeur", "price": "9,99 $" },
+      { "name": "Tartes (saveur variées)", "price": "9,99 $" },
+      { "name": "Tartes maison", "price": "14,99 $" }
+    ]
+  },
+  {
+    "category": "Tourtes et pâtes",
+    "items": [
+      { "name": "Tourtière", "price": "14,99 $" },
+      { "name": "Pâté au poulet", "price": "14,99 $" },
+      { "name": "Pâtes à pizza (petite)", "price": "2,99 $" },
+      { "name": "Pâtes à pizza (grosse)", "price": "3,99 $" },
+      { "name": "Pâtes à pizza (étendue)", "price": "4,99 $" },
+      { "name": "Pâtes à tarte", "price": "4,99 $" }
+    ]
+  }
+],
+
   "photos": {
     "hero": "/photos/Entete.png",
     "woodOven": ["/photos/fourabois.jpg", "/photos/fourabois2.jpg"],
