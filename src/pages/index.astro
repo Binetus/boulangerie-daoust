@@ -148,26 +148,18 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   <section class="address">
   <h2>Nous trouver</h2>
   <p class="address-line">📍 {business.address.full}</p>
+  <div class="phone-and-contact">
   <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
+  <a class="contact-button inline" href={`mailto:${business.email}`}>✉️ Nous joindre</a>
+</div>
 
-  <div class="address-buttons">
-    <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
+<div class="address-buttons">
+  <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
 
-    <a class="review-qr-wrapper"
-       href="https://search.google.com/local/writereview?placeid=ChIJ-9ilfecl0EwRwb8reNou_sc"
-       target="_blank"
-       rel="noopener noreferrer"
-       aria-label="Laisser un avis Google">
-      <img
-        src="https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fsearch.google.com%2Flocal%2Fwritereview%3Fplaceid%3DChIJ-9ilfecl0EwRwb8reNou_sc&size=120x120"
-        alt="QR Code pour laisser un avis Google"
-        class="qr-review"
-      />
-      <span class="qr-review-label">⭐ Laisser un avis</span>
-    </a>
-
-    <a class="contact-button" href={`mailto:${business.email}`}>✉️ Nous joindre</a>
+  <div class="qr-spacer">
+    <a class="review-qr-wrapper" ...>...contenu du QR avis...</a>
   </div>
+</div>
 
   <a class="facebook-link"
      href="https://www.facebook.com/profile.php?id=61567956039360"
@@ -631,6 +623,39 @@ footer .credit strong {
 }
 .facebook-link svg {
   flex-shrink: 0;
+}
+.phone-and-contact {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.phone-and-contact .contact-button.inline {
+  background-color: #b87333;
+  color: white;
+}
+.phone-and-contact .contact-button.inline:hover {
+  background-color: #8b5e29;
+}
+
+.phone-and-contact .contact-button.inline {
+  margin: 0;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+}
+
+/* Espace entre Maps et QR code */
+.address-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3rem !important;   /* ← espace entre Maps et QR */
+  margin-top: 1.5rem;
+}
+
+.qr-spacer {
+  display: flex;
+  align-items: center;
 }
 
 </style>
