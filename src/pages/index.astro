@@ -170,9 +170,12 @@ const paymentMethods = business.payments.map(p => ({
 
     <div class="address-buttons">
       <a class="maps-link"
-         href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>
-        Ouvrir dans Google Maps →
+    href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}
+    target="_blank"
+    rel="noopener noreferrer">
+    Ouvrir dans Google Maps →
       </a>
+
 
       <a class="review-qr-wrapper"
          href="https://search.google.com/local/writereview?placeid=ChIJ-9ilfecl0EwRwb8reNou_sc"
