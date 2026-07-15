@@ -146,14 +146,51 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   </section>
 
   <section class="address">
-    <h2>Nous trouver</h2>
-    <p class="address-line">📍 {business.address.full}</p>
-    <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
-    <a class="maps-link"
-       href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>
-      Ouvrir dans Google Maps →
+  <h2>Nous trouver</h2>
+  <p class="address-line">📍 {business.address.full}</p>
+  <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
+
+  <div class="address-buttons">
+    <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
+
+    <a class="review-qr-wrapper"
+       href="https://search.google.com/local/writereview?placeid=ChIJ-9ilfecl0EwRwb8reNou_sc"
+       target="_blank"
+       rel="noopener noreferrer"
+       aria-label="Laisser un avis Google">
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fsearch.google.com%2Flocal%2Fwritereview%3Fplaceid%3DChIJ-9ilfecl0EwRwb8reNou_sc&size=120x120"
+        alt="QR Code pour laisser un avis Google"
+        class="qr-review"
+      />
+      <span class="qr-review-label">⭐ Laisser un avis</span>
     </a>
-  </section>
+
+    <a class="contact-button" href={`mailto:${business.email}`}>✉️ Nous joindre</a>
+  </div>
+
+  <a class="facebook-link"
+     href="https://www.facebook.com/profile.php?id=61567956039360"
+     target="_blank"
+     rel="noopener noreferrer">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+      <path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/>
+    </svg>
+    Suivez-nous sur Facebook
+  </a>
+
+  <div class="qr-section">
+    <h3>📱 Scannez pour ouvrir cette page sur votre téléphone</h3>
+    <img
+      src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent('https://boulangechezdaoust.pages.dev/')}&size=200x200`}
+      alt="Code QR du site de la Boulange Chez Daoust"
+      class="qr-code"
+      loading="lazy"
+    />
+    <p class="qr-help">Scannez pour ouvrir le site sur votre téléphone</p>
+  </div>
+</section>
+
 
  <footer>
   <p>© {new Date().getFullYear()} {business.name} · {business.address.city}, QC</p>
@@ -342,6 +379,7 @@ footer .credit strong {
     section { padding: 1rem; }
     .wood-oven-grid { grid-template-columns: 1fr; }
     .menu-boards { grid-template-columns: 1fr; }
+    .qr-review { width: 70px; height: 70px; }
   }
 
   .menu-intro { color: var(--muted); font-style: italic; margin-bottom: 1rem; }
@@ -511,6 +549,88 @@ footer .credit strong {
   .carousel-slide { flex: 0 0 90%; }
   .carousel-track { padding: 1rem 1.5rem; }
   .carousel-arrow { width: 36px; height: 36px; font-size: 1.3rem; }
+}
+/* QR Code Google Avis (petit, dans le trio de boutons) */
+.review-qr-wrapper {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  background: var(--card);
+  padding: 0.6rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  transition: transform 0.15s, border-color 0.15s;
+}
+.review-qr-wrapper:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent);
+}
+.qr-review {
+  width: 80px;
+  height: 80px;
+  display: block;
+  border-radius: 4px;
+}
+.qr-review-label {
+  font-size: 0.75rem;
+  color: var(--muted);
+  margin-top: 0.4rem;
+  font-weight: 500;
+  text-align: center;
+}
+
+/* QR Code site grand (sous la section) */
+.qr-section {
+  margin-top: 2rem;
+  padding: 1.5rem;
+  background: var(--card);
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  text-align: center;
+  max-width: 320px;
+}
+.qr-section h3 {
+  font-size: 1.05rem;
+  margin: 0 0 1rem;
+  border: none;
+  padding: 0;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+}
+.qr-code {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+  display: block;
+  border-radius: 4px;
+}
+.qr-help {
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-top: 0.75rem;
+}
+
+/* Bouton Facebook */
+.facebook-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #1877f2;
+  color: white;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 500;
+  margin-top: 1rem;
+  transition: background 0.2s, transform 0.2s;
+}
+.facebook-link:hover {
+  background: #0d65d9;
+  transform: translateY(-1px);
+}
+.facebook-link svg {
+  flex-shrink: 0;
 }
 
 </style>
