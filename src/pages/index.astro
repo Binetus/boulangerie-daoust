@@ -157,7 +157,18 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
   <a class="maps-link" href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>Ouvrir dans Google Maps →</a>
 
   <div class="qr-spacer">
-    <a class="review-qr-wrapper" ...>...contenu du QR avis...</a>
+    <a class="review-qr-wrapper"
+   href="https://search.google.com/local/writereview?placeid=ChIJ-9ilfecl0EwRwb8reNou_sc"
+   target="_blank"
+   rel="noopener noreferrer"
+   aria-label="Laisser un avis Google">
+  <img
+    src="https://api.qrserver.com/v1/create-qr-code/?data=https%3A%2F%2Fsearch.google.com%2Flocal%2Fwritereview%3Fplaceid%3DChIJ-9ilfecl0EwRwb8reNou_sc&size=150x150"
+    alt="QR Code pour laisser un avis Google sur la Boulange Chez Daoust"
+    class="qr-review"
+  />
+  <span class="qr-review-label">⭐ Laisser un avis</span>
+</a>
   </div>
 
   <a class="facebook-link"
