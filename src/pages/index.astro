@@ -34,16 +34,9 @@ const jsonLd = {
   }
 };
 
-// "Aujourd'hui" en français, calculé en JS
 const today = new Date().toLocaleDateString("fr-CA", { weekday: "long" });
 const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
 const todayHours = business.hours.find(h => h.day === todayCapitalized);
-
-// Liste des paiements pour schema.org
-const paymentMethods = business.payments.map(p => ({
-  "@type": "PaymentMethod",
-  "name": p
-}));
 ---
 <Layout title={`${business.name} – ${business.tagline}`}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
@@ -170,12 +163,11 @@ const paymentMethods = business.payments.map(p => ({
 
     <div class="address-buttons">
       <a class="maps-link"
-    href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}
-    target="_blank"
-    rel="noopener noreferrer">
-    Ouvrir dans Google Maps →
+         href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}
+         target="_blank"
+         rel="noopener noreferrer">
+        Ouvrir dans Google Maps →
       </a>
-
 
       <a class="review-qr-wrapper"
          href="https://search.google.com/local/writereview?placeid=ChIJ-9ilfecl0EwRwb8reNou_sc"
@@ -210,18 +202,22 @@ const paymentMethods = business.payments.map(p => ({
         loading="lazy"
       />
       <p class="qr-help">Scannez pour ouvrir le site sur votre téléphone</p>
+
+      <div class="qr-download">
+        <a href="/qr/qr-site-web.png" download="QR-Site-Boulange.png">📥 Télécharger le QR du site</a>
+        <a href="/qr/qr-google-avis.png" download="QR-Avis-Google.png">📥 Télécharger le QR (laisser un avis)</a>
+      </div>
     </div>
   </section>
 
   <footer>
     <p>© {new Date().getFullYear()} {business.name} · {business.address.city}, QC</p>
     <p class="credit">
-  Conception et réalisation par <strong>Binetus média</strong>
-  <a href="mailto:binette.michel.qc@gmail.com" class="credit-mail" aria-label="Contacter Binetus média">
-    ✉️
-  </a>
-</p>
-
+      Conception et réalisation par <strong>Binetus média</strong>
+      <a href="mailto:binette.michel.qc@gmail.com" class="credit-mail" aria-label="Contacter Binetus média">
+        ✉️
+      </a>
+    </p>
   </footer>
 </Layout>
 
@@ -263,7 +259,6 @@ const paymentMethods = business.payments.map(p => ({
 </script>
 
 <style>
-  /* ==================== VARIABLES ==================== */
   :root {
     --cream: #080400;
     --card: #2a2018;
@@ -273,7 +268,6 @@ const paymentMethods = business.payments.map(p => ({
     --border: #050202;
   }
 
-  /* ==================== GLOBAL ==================== */
   body {
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -625,7 +619,6 @@ const paymentMethods = business.payments.map(p => ({
     transform: translateY(-1px);
   }
 
-  /* QR Avis */
   .review-qr-wrapper {
     display: inline-flex;
     flex-direction: column;
@@ -655,7 +648,6 @@ const paymentMethods = business.payments.map(p => ({
     text-align: center;
   }
 
-  /* Facebook */
   .facebook-link {
     display: inline-flex;
     align-items: center;
@@ -675,7 +667,6 @@ const paymentMethods = business.payments.map(p => ({
   }
   .facebook-link svg { flex-shrink: 0; }
 
-  /* QR Site (grand) */
   .qr-section {
     margin-top: 2rem;
     padding: 1.5rem;
@@ -706,44 +697,26 @@ const paymentMethods = business.payments.map(p => ({
     margin-top: 0.75rem;
   }
   .qr-download {
-  display: flex;
-  flex-direction: column;
-  gap: 0.6rem;
-  margin-top: 1.5rem;
-}
-
-.qr-download a {
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  background: #b87333 !important;
-  color: white !important;
-  text-decoration: none !important;
-  border-radius: 6px;
-  font-size: 0.85rem;
-  font-weight: 500;
-  text-align: center;
-  transition: background 0.2s;
-}
-
-.qr-download a:hover {
-  background: #8b5e29 !important;
-}
-
-  <div class="qr-section">
-  <h3>📱 Scannez pour ouvrir cette page sur votre téléphone</h3>
-  <img
-    src={`https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent('https://boulangechezdaoust.pages.dev/')}&size=200x200`}
-    alt="Code QR du site de la Boulange Chez Daoust"
-    class="qr-code"
-    loading="lazy"
-  />
-  <p class="qr-help">Scannez pour ouvrir le site sur votre téléphone</p>
-
-  <div class="qr-download">
-    <a href="/qr/qr-site-web.png" download="QR-Site-Boulange.png">📥 Télécharger le QR du site</a>
-    <a href="/qr/qr-google-avis.png" download="QR-Avis-Google.png">📥 Télécharger le QR (laisser un avis)</a>
-  </div>
-</div>
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-top: 1.5rem;
+  }
+  .qr-download a {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: #b87333 !important;
+    color: white !important;
+    text-decoration: none !important;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .qr-download a:hover {
+    background: #8b5e29 !important;
+  }
 
   /* ==================== FOOTER ==================== */
   footer {
@@ -770,17 +743,17 @@ const paymentMethods = business.payments.map(p => ({
     color: var(--accent);
   }
   footer .credit-mail {
-  display: inline-block;
-  margin-left: 0.5rem;
-  color: var(--accent);
-  text-decoration: none;
-  font-size: 0.95rem;
-  transition: color 0.2s, transform 0.2s;
-}
+    display: inline-block;
+    margin-left: 0.5rem;
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.2s, transform 0.2s;
+  }
   footer .credit-mail:hover {
-  color: #e8a868;
-  transform: scale(1.2);
-}
+    color: #e8a868;
+    transform: scale(1.2);
+  }
 
   /* ==================== MOBILE ==================== */
   @media (max-width: 700px) {
@@ -800,4 +773,3 @@ const paymentMethods = business.payments.map(p => ({
     .facebook-link, .contact-button.inline { width: 100%; justify-content: center; }
   }
 </style>
-
