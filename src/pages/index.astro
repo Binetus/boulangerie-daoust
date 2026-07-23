@@ -35,85 +35,173 @@ const jsonLd = {
 };
 
 // "Aujourd'hui" en français, calculé en JS
-const dayOrder = ["Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"];
 const today = new Date().toLocaleDateString("fr-CA", { weekday: "long" });
 const todayCapitalized = today.charAt(0).toUpperCase() + today.slice(1);
-const todayHours = business.hours.find(h => h.day === todayCapitalized);
+const todayIndex = business.hours.findIndex(h => h.day === todayCapitalized);
+const todayHours = todayIndex >= 0 ? business.hours[todayIndex] : undefined;
+const isOpenNow = !!todayHours?.open;
+
+// Alt text descriptif pour chaque photo de la galerie
+const galleryAltMap: Record<string, string> = {
+  "galettesmollase.jpeg": "Galettes à la mélasse, notre spécialité signature",
+  "painscuits.jpg": "Pains artisanaux sortant du four à bois",
+  "beignes.jpg": "Beignes frais du jour, confectionnés à la main",
+  "Pains2.jpg": "Pains traditionnels cuits au four à bois",
+  "pateapainpetriseur.jpg": "Pâte à pain en cours de pétrissage",
+  "patonspains.jpg": "Pâtons de pain façonnés, prêts à enfourner",
+  "tartesavantcuisson.jpg": "Tartes préparées avant la cuisson au four",
+  "maitreboulanger.jpg": "Notre maître boulanger à l'ouvrage",
+  "produitsaufour.jpg": "Produits du four à bois : pains et viennoiseries",
+  "Pizza.jpg": "Pizza au feu de bois cuite sur commande"
+};
+
+const woodOvenAlt = [
+  "Vue intérieure du four à bois d'origine de 1948",
+  "Notre four à bois en pleine cuisson"
+];
+
+const altFor = (src: string, fallback: string) => {
+  const filename = src.split("/").pop() ?? "";
+  return galleryAltMap[filename] ?? fallback;
+};
 ---
 <Layout title={`${business.name} – ${business.tagline}`}>
   <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
-  <header class="hero">
-    <img src={business.photos.hero} alt={`Devanture en bois de la Boulange Chez Daoust avec son enseigne à Notre-Dame-du-Laus`} />
+  <header class="hero" role="banner">
+    <img
+      src={business.photos.hero}
+      alt={`Devanture en bois de la Boulange Chez Daoust à Notre-Dame-du-Laus`}
+      width="1600"
+      height="900"
+      fetchpriority="high"
+      decoding="async"
+    />
     <div class="hero-overlay">
       <h1>{business.name}</h1>
       <p class="tagline">{business.tagline}</p>
-      <p class="rating">★ {business.rating} <span>({business.reviewCount} avis Google)</span></p>
+      <p class="rating" aria-label={`Note de ${business.rating} sur 5 d'après ${business.reviewCount} avis Google`}>
+        <span aria-hidden="true">★</span>
+        {business.rating}
+        <span class="rating-count">({business.reviewCount} avis Google)</span>
+      </p>
     </div>
   </header>
 
-  <section class="story">
-    <h2>Notre histoire</h2>
+  <section class="story" aria-labelledby="story-title">
+    <h2 id="story-title">Notre histoire</h2>
     <p>{business.history}</p>
   </section>
 
-  <section class="wood-oven">
-    <h2>Le four à bois, notre signature</h2>
+  <section class="wood-oven" aria-labelledby="wood-oven-title">
+    <h2 id="wood-oven-title">Le four à bois, notre signature</h2>
     <div class="wood-oven-grid">
-      {business.photos.woodOven.map(src => (
-        <img src={src} alt="Notre four à bois d'origine" loading="lazy" />
+      {business.photos.woodOven.map((src, i) => (
+        <img
+          src={src}
+          alt={woodOvenAlt[i] ?? "Notre four à bois traditionnel"}
+          loading="lazy"
+          decoding="async"
+          width="800"
+          height="600"
+        />
       ))}
     </div>
-    <p>Depuis trois générations, nous cuisons nos pains au four à bois. Une tradition vivante qui donne à chaque produit un goût fumé, profond, impossible à reproduire dans un four moderne.</p>
+    <p>Depuis quatre générations, nous cuisons nos pains au four à bois. Une tradition vivante qui donne à chaque produit un goût fumé, profond, impossible à reproduire dans un four moderne.</p>
   </section>
 
-  <section class="specialties">
-    <h2>Nos spécialités</h2>
-    <div class="specialty-grid">
+  <section class="specialties" aria-labelledby="specialties-title">
+    <h2 id="specialties-title">Nos spécialités</h2>
+    <ul class="specialty-grid" role="list">
       {business.specialties.map(s => (
-        <article class="specialty-card">
+        <li class="specialty-card">
           <h3>{s.name}</h3>
           {s.description && <p>{s.description}</p>}
-        </article>
-      ))}
-    </div>
-  </section>
-
-  <section class="gallery">
-    <h2>En images</h2>
-    <div class="gallery-grid">
-      {business.photos.gallery.map(src => (
-        <img src={src} alt="" loading="lazy" />
-      ))}
-    </div>
-  </section>
-
-  <section class="hours">
-    <h2>Heures d'ouverture</h2>
-    <ul class="hours-list">
-      {business.hours.map(h => (
-        <li class={h.open ? 'open' : 'closed'}>
-          <span class="day">{h.day}</span>
-          <span class="time">{h.time}</span>
         </li>
       ))}
     </ul>
+  </section>
+
+  <section class="gallery" aria-labelledby="gallery-title">
+    <h2 id="gallery-title">En images</h2>
+    <div class="gallery-grid">
+      {business.photos.gallery.map(src => (
+        <img
+          src={src}
+          alt={altFor(src, "Photo de la boulangerie")}
+          loading="lazy"
+          decoding="async"
+          width="600"
+          height="600"
+        />
+      ))}
+    </div>
+  </section>
+
+  <section class="hours" aria-labelledby="hours-title">
+    <h2 id="hours-title">Heures d'ouverture</h2>
+    <ul class="hours-list" role="list">
+      {business.hours.map((h, i) => {
+        const isToday = i === todayIndex;
+        return (
+          <li
+            class={`${h.open ? 'open' : 'closed'} ${isToday ? 'today' : ''}`}
+            aria-current={isToday ? 'true' : undefined}
+          >
+            <span class="day">
+              {h.day}
+              {isToday && <span class="visually-hidden"> (aujourd'hui)</span>}
+            </span>
+            <span class="time">
+              {h.open ? (
+                <>
+                  <time dateTime={h.timeOpens}>{h.timeOpens}</time>
+                  {' – '}
+                  <time dateTime={h.timeCloses}>{h.timeCloses}</time>
+                </>
+              ) : (
+                h.time
+              )}
+            </span>
+          </li>
+        );
+      })}
+    </ul>
     {todayHours && (
-      <p class="today">
-        {todayHours.open
-          ? `✅ Aujourd'hui, nous sommes ouverts de ${todayHours.time.toLowerCase()}.`
-          : `🚫 Aujourd'hui, nous sommes fermés.`}
+      <p class="today-status" role="status" aria-live="polite">
+        <span aria-hidden="true">{isOpenNow ? '✅' : '🚫'}</span>
+        {isOpenNow
+          ? `Aujourd'hui, nous sommes ouverts de ${todayHours.time.toLowerCase()}.`
+          : `Aujourd'hui, nous sommes fermés.`
+        }
       </p>
     )}
   </section>
 
-  <section class="address">
-    <h2>Nous trouver</h2>
-    <p class="address-line">📍 {business.address.full}</p>
-    <p class="phone-line">📞 <a href={`tel:${business.phoneRaw}`}>{business.phone}</a></p>
-    <a class="maps-link"
-       href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}>
-      Ouvrir dans Google Maps →
+  <section class="address" aria-labelledby="address-title">
+    <h2 id="address-title">Nous trouver</h2>
+    <p class="address-line">
+      <span aria-hidden="true" class="icon">📍</span>
+      <span>{business.address.full}</span>
+    </p>
+    <p class="phone-line">
+      <span aria-hidden="true" class="icon">📞</span>
+      <a
+        href={`tel:${business.phoneRaw}`}
+        aria-label={`Appeler la Boulange Chez Daoust au ${business.phone}`}
+      >
+        {business.phone}
+      </a>
+    </p>
+    <a
+      class="maps-link"
+      href={`https://www.google.com/maps/search/${encodeURIComponent(business.name + ' ' + business.address.full)}`}
+      aria-label={`Ouvrir ${business.name}, ${business.address.full} dans Google Maps (nouvel onglet)`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Ouvrir dans Google Maps
+      <span aria-hidden="true">→</span>
     </a>
   </section>
 
@@ -128,90 +216,255 @@ const todayHours = business.hours.find(h => h.day === todayCapitalized);
     --card: #fff8ed;
     --text: #2d2419;
     --accent: #b87333;
+    --accent-hover: #9a5d2a;
     --muted: #8b7d6b;
     --border: #e8dfd0;
+    --focus: #b87333;
+    --container: 1100px;
+    --space-section: clamp(1.25rem, 3vw, 2.5rem);
+    --space-block: clamp(0.75rem, 2vw, 1.25rem);
   }
+
+  * {
+    box-sizing: border-box;
+  }
+
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, system-ui, sans-serif;
     color: var(--text);
     background: var(--cream);
     line-height: 1.65;
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
   }
-  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; color: var(--text); }
-  h1 { font-size: 2.5rem; margin: 0; }
-  h2 { font-size: 1.75rem; margin: 0 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid var(--accent); }
-  h3 { font-size: 1.15rem; margin: 0 0 0.4rem; }
+
+  h1, h2, h3 { font-family: Georgia, "Times New Roman", serif; color: var(--text); line-height: 1.25; }
+  h1 { font-size: clamp(1.85rem, 5vw, 3rem); margin: 0; }
+  h2 {
+    font-size: clamp(1.4rem, 3.5vw, 1.85rem);
+    margin: 0 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--accent);
+  }
+  h3 { font-size: clamp(1.1rem, 2.5vw, 1.2rem); margin: 0 0 0.4rem; }
   p { margin: 0.5rem 0; }
+  a { color: var(--accent); }
+  a:hover { color: var(--accent-hover); }
 
-  .hero { position: relative; width: 100%; height: 400px; overflow: hidden; }
-  .hero img { width: 100%; height: 100%; object-fit: cover; object-position: center 60%; }
+  /* Accessibilité : texte uniquement lu par les lecteurs d'écran */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    width: 100%;
+    height: clamp(280px, 55vh, 520px);
+    overflow: hidden;
+    background: #1a0f08;
+  }
+  .hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 60%;
+    display: block;
+  }
   .hero-overlay {
-  position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.75));
-  display: flex; flex-direction: column; justify-content: flex-end;
-  padding: 2rem; color: white;
-}
-  
-  .hero-overlay h1 { color: white; margin: 0 0 0.25rem; }
-  .hero-overlay .tagline { font-size: 1.15rem; opacity: 0.95; margin: 0 0 0.5rem; }
-  .hero-overlay .rating { font-size: 1rem; opacity: 0.9; margin: 0; }
-  .hero-overlay .rating span { opacity: 0.75; font-size: 0.9rem; }
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15), rgba(0,0,0,0.78));
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: clamp(1rem, 4vw, 2.5rem);
+    color: #ffffff;
+  }
+  .hero-overlay h1 { color: #ffffff; margin: 0 0 0.25rem; }
+  .hero-overlay .tagline {
+    font-size: clamp(1rem, 2.5vw, 1.2rem);
+    opacity: 0.95;
+    margin: 0 0 0.5rem;
+  }
+  .hero-overlay .rating {
+    font-size: clamp(0.95rem, 2vw, 1.05rem);
+    opacity: 0.95;
+    margin: 0;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.35rem;
+  }
+  .hero-overlay .rating-count {
+    opacity: 0.8;
+    font-size: 0.85em;
+  }
 
-  section { padding: 1.75rem 2rem; max-width: 1100px; margin: 0 auto; }
-  .story { background: var(--card); border-left: 4px solid var(--accent); }
-  .story p { font-size: 1.05rem; line-height: 1.7; }
+  main { display: block; }
+
+  section {
+    padding: var(--space-section);
+    max-width: var(--container);
+    margin: 0 auto;
+  }
+
+  .story {
+    background: var(--card);
+    border-left: 4px solid var(--accent);
+    margin-block: clamp(0.5rem, 2vw, 1rem);
+    border-radius: 0 8px 8px 0;
+  }
+  .story p { font-size: clamp(1rem, 2vw, 1.1rem); line-height: 1.7; }
 
   .wood-oven-grid {
-    display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1rem 0 1.25rem;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin: 1rem 0 1.25rem;
   }
-  .wood-oven-grid img { width: 100%; border-radius: 8px; height: 280px; object-fit: cover; }
+  .wood-oven-grid img {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
+    display: block;
+  }
 
   .specialty-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 1rem; margin: 1rem 0;
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
   }
   .specialty-card {
-    background: var(--card); padding: 1.25rem;
-    border-radius: 8px; border: 1px solid var(--border);
+    background: var(--card);
+    padding: 1.15rem 1.25rem;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+  .specialty-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(184, 115, 51, 0.12);
+    border-color: var(--accent);
   }
 
   .gallery-grid {
-    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 0.75rem; margin: 1rem 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0 0;
   }
-  .gallery-grid img { width: 100%; height: 200px; object-fit: cover; border-radius: 6px; }
+  .gallery-grid img {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
+    border-radius: 6px;
+    display: block;
+  }
 
-  .hours-list { list-style: none; padding: 0; margin: 1rem 0; max-width: 360px; }
-  .hours-list li {
-    display: flex; justify-content: space-between;
-    padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--border);
+  .hours-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0;
+    max-width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border);
   }
+  .hours-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream);
+  }
+  .hours-list li:last-child { border-bottom: 0; }
   .hours-list li.closed { color: var(--muted); font-style: italic; }
   .hours-list .day { font-weight: 600; }
-  .today {
-    background: var(--card); padding: 0.75rem 1rem; border-radius: 6px;
-    border-left: 3px solid var(--accent); font-weight: 500; margin-top: 1rem;
+  .hours-list li.today {
+    background: rgba(184, 115, 51, 0.10);
+    border-left: 3px solid var(--accent);
+    padding-left: calc(0.9rem - 3px);
+    font-weight: 500;
+  }
+  .hours-list li.today .day::after {
+    content: " · aujourd'hui";
+    font-weight: 400;
+    color: var(--accent);
+    font-size: 0.85em;
+  }
+  .today-status {
+    background: var(--card);
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    border-left: 3px solid var(--accent);
+    font-weight: 500;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
 
-  .address-line, .phone-line { font-size: 1.1rem; }
-  .maps-link {
-    display: inline-block; background: var(--accent); color: white;
-    padding: 0.75rem 1.25rem; border-radius: 6px; text-decoration: none;
-    margin-top: 1rem; font-weight: 500;
+  .address-line, .phone-line {
+    font-size: clamp(1.05rem, 2.2vw, 1.15rem);
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    margin: 0.65rem 0;
   }
-  .maps-link:hover { background: #9a5d2a; }
+  .address-line .icon, .phone-line .icon { font-size: 1.1em; }
+  .phone-line a, .address-line a, .maps-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+  .maps-link {
+    background: var(--accent);
+    color: #ffffff;
+    padding: 0.85rem 1.4rem;
+    border-radius: 6px;
+    text-decoration: none;
+    margin-top: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s ease, transform 0.2s ease;
+    gap: 0.4rem;
+  }
+  .maps-link:hover { background: var(--accent-hover); color: #ffffff; transform: translateY(-1px); }
 
   footer {
-    text-align: center; padding: 2rem 1rem; color: var(--muted);
-    font-size: 0.9rem; border-top: 1px solid var(--border); margin-top: 2rem;
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    border-top: 1px solid var(--border);
+    margin-top: 2rem;
   }
 
-  @media (max-width: 600px) {
-    .hero { height: 400px; }
-    h1 { font-size: 1.85rem; }
-    h2 { font-size: 1.45rem; }
-    section { padding: 1rem; }
-    .wood-oven-grid { grid-template-columns: 1fr; }
+  /* Tablette */
+  @media (min-width: 640px) {
+    .wood-oven-grid { grid-template-columns: 1fr 1fr; }
+    .specialty-grid { grid-template-columns: repeat(2, 1fr); }
+    .hours-list { max-width: 480px; }
+  }
+
+  /* Desktop */
+  @media (min-width: 900px) {
+    .specialty-grid { grid-template-columns: repeat(4, 1fr); }
+    .gallery-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
   }
 </style>
